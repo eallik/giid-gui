@@ -21,6 +21,12 @@
 // proper components that participate in the hierarchy directly, in which case
 // it is allotted a place in the hierarchy and assigned a view and controller.
 
+var BG_ALL = [
+  "tallinn", 
+  "paris",
+  "bridge",
+];
+
 var SelectBox = React.createClass({
   getInitialState: function() { return {isModifying: false}; },
 
@@ -44,7 +50,7 @@ var SelectBox = React.createClass({
       float: this.props.itemFloat,
       backgroundColor: "rgba(255, 255, 255, 0.5)",
       width: "43px", height: "41px", margin: "4px",
-      borderRadius: "7px"
+      // borderRadius: "7px"
     };
     var selectedItems = this.props.selected.map(
       x => <img style={itemStyle} key={x.key} alt={x.label} src={x.iconUri()} />
@@ -100,9 +106,9 @@ var Search = React.createClass({
   },
   style: { height: "100%", position: "relative" },
   bgStyle: {
-    backgroundImage: (new Date()).getMinutes() % 2 == 0 ? "url(/img/bg_rome3.jpg)" : "url(/img/bg_paris.jpg)",
+    backgroundImage: "url(/img/bg_" + BG_ALL[(new Date()).getMinutes() % BG_ALL.length] + ".jpg)",
     backgroundPosition: "center center", backgroundSize: "auto 100%", backgroundRepeat: "no-repeat",
-    WebkitFilter: "blur(5px)",
+    WebkitFilter: "blur(4px)",
 
     position: "fixed", left: 0, right: 0, top: 0, bottom: 0, zIndex: 1
   },
@@ -124,11 +130,19 @@ var Search = React.createClass({
       <div className="search" style={this.style}>
         <div style={this.bgStyle}></div>
         <div style={this.contentStyle}>
-          <div style={{position: "absolute", left: "0px", right: "50%"}}>
-            <SelectBox selected={this.state.langs}  all={LANG_ALL}  onYield={this.onLangSelectionChange}  itemFloat="left"  />
+          <div style={{background:"-webkit-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0))"}}>
+            <img style={{margin:"5px 0 0px 10px"}} src="/img/guideme_takemeonatour.png"/>
           </div>
-          <div style={{position: "absolute", left: "50%", right: "0px"}}>
-            <SelectBox selected={this.state.topics} all={TOPIC_ALL} onYield={this.onTopicSelectionChange} itemFloat="right" />
+          <div style={{position:"relative"}}>
+            <div style={{position: "absolute", left: "0px", right: "50%"}}>
+              <SelectBox selected={this.state.langs}  all={LANG_ALL}  onYield={this.onLangSelectionChange}  itemFloat="left"  />
+            </div>
+            <div style={{position: "absolute", left: "50%", right: "0px"}}>
+              <SelectBox selected={this.state.topics} all={TOPIC_ALL} onYield={this.onTopicSelectionChange} itemFloat="right" />
+            </div>
+          <div style={{position: "absolute", top: "55px", width: "100%"}}>
+            <SearchResults items={[]} />
+          </div>
           </div>
         </div>
       </div>
@@ -136,11 +150,78 @@ var Search = React.createClass({
   }
 });
 
+var SearchResults = React.createClass({
+  itemStyle: {height:"110px", backgroundColor:"rgba(255,255,255,0.5)", lineHeight:"1em", overflow:"hidden", position:"relative", margin:"1px"},
+  render: function() {
+    var items = GUIDES_ALL.map(x => {
+      return (
+          <div key={x.id} style={this.itemStyle}>
+            <div style={{position: "absolute", left:"10px",top:"10px"}}>
+              <img src={x.profilePhoto} style={{display:"block", width: "55px", height: "55px", marginBottom:"5px"}} />
+            </div>
+            <div style={{position: "absolute", left:"80px", top:"10px", fontSize:"11px",textTransform:"uppercase"}}>
+              {
+                x.certifications.length === 0 
+                  ? "tour guide" : x.certifications.map(
+                    x => x.type === "certified" ? "certified by " + x.by : x.type === "featured" ? "featured today" : x.type
+                  )
+              }
+            </div>
+            <div style={{position: "absolute", left:"80px", top:"26px", fontWeight:"bold"}}>
+              {x.name}
+            </div>
+            <div style={{position: "absolute", left:"80px", top:"45px", fontSize:"10px"}}>
+              {x.locations.join(" / ")}
+            </div>
+            <div style={{position: "absolute", left:"80px", top:"62px", fontSize:"15px",fontWeight:"bold",padding:"6px",backgroundColor:"#FF99C0",borderRadius:"3px",width:"30px",textAlign:"center"}}>
+              {x.rating}
+            </div>
+            <div style={{position:"absolute",right:"20px", top:"62px"}}>
+              <PingMeBtn/>
+            </div>
+          </div>
+      );
+    });
+    return (
+        <div style={{left: 0, right: 0}}>
+          {items}
+        </div>
+    );
+  }
+});
+
+var PingMeBtn = React.createClass({
+  getInitialState: function() { return {pressed:false}; },
+  render: function() {
+      return (
+          <div
+            onTouchStart={this.onTouchStart} 
+            onMouseDown={this.onTouchStart}
+            onTouchEnd={this.onTouchEnd}
+            onMouseOut={this.onTouchEnd}
+            onMouseUp={this.onTouchEnd}
+            style={{border:"2px solid rgb(254,255,240)", WebkitUserSelect: "none", textAlign:"left", fontSize:"11px",textTransform:"uppercase",
+                    padding:"6px 8px",borderRadius:"3px",width:"70px",
+                    background:"#99FFC0 url(/img/bell.png) no-repeat",backgroundPosition:"85% 50%",backgroundSize:"13px 13px",
+                    WebkitFilter: this.state.pressed ? "invert(15%)" : "invert(0%)"
+                   }}
+          >
+            ping me
+          </div>
+      );
+  },
+  onTouchStart: function(e) { this.setState({pressed:true}); },
+  onTouchEnd:  function(e) { this.setState({pressed:false}); }
+});
 
 ///////////////////////////
 
-function mapFromList(xs) { return xs.reduce((acc, y) => { acc[y[0]] = y[1]; return acc; }, {}); }
+function intercalate(sep, xs) { 
+  if (xs.length === 0) return [];
+  return xs.slice(1).reduceRight((acc, x) => acc.concat([sep]).concat(x), [xs[0]]);
+}
 
+function mapFromList(xs) { return xs.reduce((acc, y) => { acc[y[0]] = y[1]; return acc; }, {}); }
 
 //////////////////////////
 
@@ -200,7 +281,40 @@ var _TOPIC_ALL_LOOKUP = mapFromList(
 );
 
 
+var GUIDES_ALL = [
+  {
+    id: "erik" , name: "Erik" , locations: ["Tallinn"],
+    certifications: [],
+    rating: "9.2",
+    profilePhoto: "/img/profile-photos/erik-kilpkonn.jpg"
+  },
+  {
+    id: "timo" , name: "Timo" , locations: ["Tallinn","Helsinki"],
+    certifications: [],
+    rating: "9.2",
+    profilePhoto: "/img/profile-photos/timo-maakler.jpg"
+  },
+  {
+    id: "kaiko", name: "Kaiko", locations: ["Viljandi","Tallinn"],
+    certifications: [
+      {type:"featured"}
+    ],
+    rating: "9.3",
+    profilePhoto: "/img/profile-photos/kaiko.jpg"
+  },
+  {
+    id: "siim" , name: "Siim" , locations: ["Tallinn"],
+    certifications: [
+      {type:"certified",by:"Estonian Assoc. of Tourist Guides"}
+    ],
+    rating: "10.0",
+    profilePhoto: "/img/profile-photos/siim.jpg"
+  }
+];
+
+
+window.Search = Search;
 
 window.LANG_ALL = LANG_ALL;
 window._LANG_ALL_LOOKUP = _LANG_ALL_LOOKUP;
-window.Search = Search;
+window.GUIDES_ALL = GUIDES_ALL;
