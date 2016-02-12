@@ -39,11 +39,15 @@ var LangBox = React.createClass({
           onDone={this.onEndSelection}
         />
     );
-    var selectedItems = this.state.selected.map(x => <img width="40px" height="32px" style={{padding: "2px"}} key={x.code} alt={x.label} src={x.iconUri()} />);
+    var selectedItems = this.state.selected.map(x => <img width="40px" height="28px" style={{padding: "2px"}} key={x.code} alt={x.label} src={x.iconUri()} />);
     return (
         <div className="lang-box" style={{position: "relative"}}>
-          <div style={{position: "absolute", zIndex: -1}}>{this.state.isModifying ? langsSelect : null}</div>
-          <div style={{position: "absolute", zIndex:  1}} onClick={this.onBeginSelection}>{selectedItems}</div>
+          <div style={{position: "absolute", zIndex: navigator.platform === "iPhone" ? -1 : 2}}>
+            {this.state.isModifying ? langsSelect : null}
+          </div>
+          <div style={{position: "absolute", zIndex:  1}} onClick={this.onBeginSelection}>
+            {selectedItems}
+          </div>
         </div>
     );
   }
