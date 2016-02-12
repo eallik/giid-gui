@@ -22,20 +22,21 @@
 // it is allotted a place in the hierarchy and assigned a view and controller.
 
 var SelectBox = React.createClass({
-  getInitialState: function() { return {isModifying: false, selected: this.props.selected}; },
+  getInitialState: function() { return {isModifying: false}; },
 
   onBeginSelection: function(e) { this.setState({isModifying: true}); },
   onEndSelection  : function(e) { this.setState({isModifying: false}); },
 
-  onYieldSelection: function(values) {
+  onPickerYield: function(values) {
     console.debug(values);
-    this.setState({selected: values});
+    this.props.onYield(values);
+    // this.setState({selected: values});
   },
   render: function() {
     var picker = (
         <SelectPicker
-          selected={this.state.selected} all={this.props.all}
-          onYield={this.onYieldSelection}
+          selected={this.props.selected} all={this.props.all}
+          onYield={this.onPickerYield}
           onDone={this.onEndSelection}
         />
     );
@@ -45,12 +46,12 @@ var SelectBox = React.createClass({
       margin: "2px",
       borderRadius: "7px"
     };
-    var selectedItems = this.state.selected.map(
+    var selectedItems = this.props.selected.map(
       x => <img width="35px" height="30px" style={itemStyle} key={x.key} alt={x.label} src={x.iconUri()} />
     );
     return (
         <div className="select-box" style={{position: "relative"}}>
-          <div style={{position: "absolute", zIndex: navigator.platform === "iPhone" ? -1 : 2, opacity: "0"}}>
+          <div style={{position: "absolute", zIndex: navigator.platform === "iPhone" ? -1 : 2, opacity: navigator.platform === "iPhone" ? 0.0 : 1.0}}>
             {this.state.isModifying ? picker : null}
           </div>
           <div style={{position: "absolute", zIndex:  1, width: "100%"}} onClick={this.onBeginSelection}>
@@ -63,12 +64,12 @@ var SelectBox = React.createClass({
 
 
 var SelectPicker = React.createClass({
-  getInitialState: function() { return {selected: this.props.selected}; },
+  // getInitialState: function() { return {selected: this.props.selected}; },
   componentDidMount: function() { this.refs.select.focus(); },
   isSelected: function(key) { return this.props.selected.some(x => x.key === key); },
   onChange: function(e) {
-    var vals = $(e.target).val().map(key => this.props.all.find(x => x.key === key));
-    this.setState({selected: vals});
+    var vals = ($(e.target).val() || []).map(key => this.props.all.find(x => x.key === key));
+    console.debug("SelectPicker.onChange: ", vals);
     this.props.onYield(vals);
   },
   render: function() {
@@ -77,7 +78,7 @@ var SelectPicker = React.createClass({
     );
     // XXX: the dummy optgroup is needed; otherwise iOS safari auto-unselects the first value for some reason
     return (
-        <select style={{appearance: "none"}} ref="select" value={this.state.selected.map(x => x.key)} onChange={this.onChange} className="select-picker" multiple="multiple" onBlur={this.props.onDone}>
+        <select style={{appearance: "none"}} ref="select" value={this.props.selected.map(x => x.key)} onChange={this.onChange} className="select-picker" multiple="multiple" onBlur={this.props.onDone}>
           <optgroup disabled></optgroup>
           {options}
         </select>
@@ -89,6 +90,12 @@ var SelectPicker = React.createClass({
 //////////////////////////
 
 var Search = React.createClass({
+  getInitialState: function() {
+    return {
+      langs: ["en", "et"].map(x => _LANG_ALL_LOOKUP[x]),
+      topics: ["history", "architecture"].map(x => _TOPIC_ALL_LOOKUP[x])
+    };
+  },
   style: { height: "100%", position: "relative" },
   bgStyle: {
     backgroundImage: (new Date()).getMinutes() % 2 == 0 ? "url(/img/bg_rome3.jpg)" : "url(/img/bg_paris.jpg)",
@@ -100,20 +107,20 @@ var Search = React.createClass({
   contentStyle: {
     position: "fixed", left: 0, right: 0, zIndex: 9999
   },
-  render: function() {
-    var selectedLangs = ["en", "et"].map(x => _LANG_ALL_LOOKUP[x]);
-    var selectedTopics = ["history", "architecture"].map(x => _TOPIC_ALL_LOOKUP[x]);
-    console.debug(selectedTopics);
 
+  onTopicSelectionChange: function(topics) { this.setState({topics: topics}); },
+  onLangSelectionChange : function(langs ) { this.setState({langs : langs }); },
+
+  render: function() {
     return (
       <div className="search" style={this.style}>
         <div style={this.bgStyle}></div>
         <div style={this.contentStyle}>
           <div style={{position: "absolute", left: "0px", right: "50%"}}>
-            <SelectBox selected={selectedLangs}  all={LANG_ALL} itemFloat="left" />
+            <SelectBox selected={this.state.langs}  all={LANG_ALL}  onYield={this.onLangSelectionChange}  itemFloat="left"  />
           </div>
           <div style={{position: "absolute", left: "50%", right: "0px"}}>
-            <SelectBox selected={selectedTopics} all={TOPIC_ALL} itemFloat="right" />
+            <SelectBox selected={this.state.topics} all={TOPIC_ALL} onYield={this.onTopicSelectionChange} itemFloat="right" />
           </div>
         </div>
       </div>
