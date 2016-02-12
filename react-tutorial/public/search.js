@@ -1,111 +1,138 @@
-function mapFromList(xs) { return xs.reduce((acc, x) => { acc[x[0]] = x[1]; return acc; }, {}); }
+// use ReactJS components ONLY FOR RENDERING
+//
+// terminology:
+//
+// * component -- contains a rendering, delegates user actions to the controller
+// * rendering -- the output of React components' rendering, based on templates
+//   in the render methods
+// * view -- the data structure from which React components' compute the rendering
+// * controller -- handles events from its matching React component and updates the view
+//
+// the entire app is a hierarchy; each node in the hierarchy corresponds to a
+// component; each component has a view it has to render, and an accompanying
+// controller it sends its events to.  regular components delegate all state
+// management to their controller; only ephemeral subcomponents are allowed to
+// be treated as black boxes with their private internal state, whose only
+// output is their result, but that result is then recorded as an event in the
+// parent component and sent to the controller anyway.
+//
+// therefore state is only ever bubbled up the hierarchy to the nearest
+// non-ephemeral component. also, ephemeral components are often "promoted" to
+// proper components that participate in the hierarchy directly, in which case
+// it is allotted a place in the hierarchy and assigned a view and controller.
 
-var LANG_ALL = [
-  ["en", [["us", "uk"], "English"]],
-  ["et", [["ee"],       "Eesti keel"]],
-  ["fi", [["fi"],       "Suomi"]],
-  ["ru", [["fo"],       "Русский"]],
-  ["sw", [["fo"],       "Swedish"]],
-  ["de", [["fo"],       "Deutsch"]],
-  ["fr", [["fo"],       "Français"]],
-  ["es", [["fo"],       "Español"]],
-  ["it", [["fo"],       "Italiano"]],
-  ["pt", [["fo"],       "Português"]],
-].sort();
-var _LANG_ALL_LOOKUP = mapFromList(LANG_ALL);
+var LangBox = React.createClass({
+  getInitialState: function() { return {isModifying: false, selected: this.props.selected}; },
 
-function langIcoUriAndLabelDefault(langCode) {
-  return langIcoUriAndLabelWithGeom([128,128], langCode);
-}
-function langIcoUriAndLabelWithGeom(geom, langCode) {
-  var [w,h]             = geom,
-      [ctryCodes,label] = _LANG_ALL_LOOKUP[langCode],
-      uri               = ("/img/" + langCode + "_" + ctryCodes.join('+') 
-                           +"_"+ w+"x"+h
-                           +".png");
-  return [uri, label];
-}
+  onBeginSelection: function(e) { this.setState({isModifying: true}); },
+  onEndSelection  : function(e) { this.setState({isModifying: false}); },
 
-var LanguageSelection = React.createClass({
-  itemStyle: {
-    display: "inline-block",
-    padding: "3px"
-  },
-  getInitialState: function() { return {sel: this.props.selected}; },
-  handleLangCode: function(e) { e.preventDefault(); },
-  onAddLangCode: function(langCode) {
-    console.debug('onAddLangCode');
-    if (this.state.sel.indexOf(langCode) === -1)
-      this.setState({languageCodes: this.state.sel.concat([langCode])});
-  },
-  getUnselected: function() {
-    return this.props.all.filter((i) => this.state.sel.indexOf(i) === -1);
+  onYieldSelection: function(values) {
+    console.debug(values);
+    this.setState({selected: values});
   },
   render: function() {
-    var languageSelectors = this.state.sel.map(function(langCode) {
-      return (
-        <button
-          ref={langCode}
-          key={langCode}
-          style={this.itemStyle}
-          className="languageSelector"
-          onClick={this.handleLangCode}
-        >{langCode}</button>
-      );
-    }.bind(this));
+    var langsSelect = (
+        <LangsDoSelect
+          selected={this.state.selected} all={this.props.all}
+          onYield={this.onYieldSelection}
+          onDone={this.onEndSelection}
+        />
+    );
+    var selectedItems = this.state.selected.map(x => <img width="40px" height="32px" style={{padding: "2px"}} key={x.code} alt={x.label} src={x.iconUri()} />);
     return (
-      <div className="languageSelection">
-        {languageSelectors}
-        <InlinePicker options={this.getUnselected()} onAdd={this.onAddLangCode}/>
-      </div>
+        <div className="lang-box" style={{position: "relative"}}>
+          <div style={{position: "absolute", zIndex: -1}}>{this.state.isModifying ? langsSelect : null}</div>
+          <div style={{position: "absolute", zIndex:  1}} onClick={this.onBeginSelection}>{selectedItems}</div>
+        </div>
     );
   }
 });
 
-var InlinePicker = React.createClass({
-  getInitialState: function() {
-    return {
-      isAdding: false
-    };
+
+var LangsDoSelect = React.createClass({
+  getInitialState: function() { return {selected: this.props.selected}; },
+  componentDidMount: function() { this.refs.select.focus(); },
+  isLangSelected: function(code) {
+    return this.props.selected.some(x => x.code === code);
   },
-  handleAdd:    function(e) { this.setState({isAdding: true }); },
-  handleCancel: function(e) { this.setState({isAdding: false}); },
-  handleSelect: function(e) {
-    this.setState({isAdding: false});
-    this.props.onAdd(e.target.value);
+  onChange: function(e) {
+    var vals = $(e.target).val().map(code => this.props.all.find(x => x.code === code));
+    console.debug("onChange: ", vals);
+    this.setState({selected: vals});
+    this.props.onYield(vals);
   },
   render: function() {
-    var addBtn =
-      <button onClick={this.handleAdd}>+</button>;
-    var options = this.props.options.map((opt) => <option value={opt}>Spanish/Español</option>);
-    var selectBox = (
-      <div>
-        <select className="languagePicker" onChange={this.handleSelect}>
-          <option>pick language</option>
-          
-          <option value="fr">French/Français</option>
+    var options = this.props.all.map(
+      ({code,label}) => <option key={code} value={code}>{label}</option>
+    );
+    // XXX: the dummy optgroup is needed; otherwise iOS safari auto-unselects the first value for some reason
+    return (
+        <select style={{appearance: "none"}} ref="select" value={this.state.selected.map(x => x.code)} onChange={this.onChange} className="langs-do-select" multiple="multiple" onBlur={this.props.onDone}>
+          <optgroup disabled></optgroup>
+          {options}
         </select>
-        <button onClick={this.handleCancel}>X</button>
-      </div>
-    );
-    return (
-      <div className="languagePicker" style={{display: "inline-block"}}>
-        {this.state.isAdding ? selectBox : addBtn}
-      </div>
     );
   }
 });
 
-window.Search = React.createClass({
+
+//////////////////////////
+
+var Search = React.createClass({
   style: {
     backgroundColor: "yellow",
     height: "100%"
   },
   render: function() {
+    var selected = [
+      _LANG_ALL_LOOKUP["en"],
+      _LANG_ALL_LOOKUP["et"]
+    ];
     return (
       <div className="search" style={this.style}>
-        <LanguageSelection selected={["en","ee"]} all={LANG_ALL} />
+        <LangBox selected={selected} all={LANG_ALL} />
       </div>
     );
   }
 });
+
+
+///////////////////////////
+
+function mapFromList(xs) { return xs.reduce((acc, y) => { acc[y[0]] = y[1]; return acc; }, {}); }
+
+
+//////////////////////////
+
+function Language(attrs) { Object.assign(this, attrs); }
+Language.prototype = {
+  iconUri: function() {
+    return this.icoUriWithGeom({w:128,h:128});
+  },
+  icoUriWithGeom: function(geom) {
+    return ("/img/" + this.code + "_" + this.ctryCodes.join('+')
+            + "_" + geom.w+"x"+geom.h + ".png");
+  }
+}
+
+var LANG_ALL = [
+  {code: "en", ctryCodes: ["us", "uk"], label: "English"},
+  {code: "et", ctryCodes: ["ee"],       label: "Eesti keel"},
+  {code: "fi", ctryCodes: ["fi"],       label: "Suomi"},
+  {code: "ru", ctryCodes: ["rf"],       label: "Ру́сский"},
+  {code: "sw", ctryCodes: ["se"],       label: "Svenska"},
+  {code: "de", ctryCodes: ["de"],       label: "Deutsch"},
+  {code: "fr", ctryCodes: ["fr"],       label: "Français"},
+  {code: "es", ctryCodes: ["es"],       label: "Español"},
+  {code: "it", ctryCodes: ["it"],       label: "Italiano"},
+  {code: "pt", ctryCodes: ["pt"],       label: "Português"},
+].map(y => new Language(y));
+
+var _LANG_ALL_LOOKUP = mapFromList(
+  LANG_ALL.map(y => [y.code, y])
+);
+
+window.LANG_ALL = LANG_ALL;
+window._LANG_ALL_LOOKUP = _LANG_ALL_LOOKUP;
+window.Search = Search;
