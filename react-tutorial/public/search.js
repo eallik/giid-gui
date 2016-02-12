@@ -130,7 +130,7 @@ var LANG_ALL = [
   {code: "fr", ctryCodes: ["fr"],       label: "Français"},
   {code: "es", ctryCodes: ["es"],       label: "Español"},
   {code: "it", ctryCodes: ["it"],       label: "Italiano"},
-  {code: "pt", ctryCodes: ["pt"],       label: "Português"},
+  {code: "pt", ctryCodes: ["pt", "br"],       label: "Português"},
 ].map(y => new Language(y));
 
 var _LANG_ALL_LOOKUP = mapFromList(
