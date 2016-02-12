@@ -43,11 +43,11 @@ var SelectBox = React.createClass({
     var itemStyle = {
       float: this.props.itemFloat, 
       backgroundColor: "rgba(255, 255, 255, 0.5)",
-      margin: "2px",
+      width: "43px", height: "41px", margin: "4px",
       borderRadius: "7px"
     };
     var selectedItems = this.props.selected.map(
-      x => <img width="35px" height="30px" style={itemStyle} key={x.key} alt={x.label} src={x.iconUri()} />
+      x => <img style={itemStyle} key={x.key} alt={x.label} src={x.iconUri()} />
     );
     return (
         <div className="select-box" style={{position: "relative"}}>
