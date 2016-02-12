@@ -49,6 +49,9 @@ var SelectBox = React.createClass({
     var selectedItems = this.props.selected.map(
       x => <img style={itemStyle} key={x.key} alt={x.label} src={x.iconUri()} />
     );
+    if (this.props.itemFloat === "right")
+      selectedItems.reverse();
+
     return (
         <div className="select-box" style={{position: "relative"}}>
           <div style={{position: "absolute", zIndex: navigator.platform === "iPhone" ? -1 : 2, opacity: navigator.platform === "iPhone" ? 0.0 : 1.0}}>
