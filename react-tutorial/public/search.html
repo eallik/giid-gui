@@ -18,6 +18,7 @@
 
     <script type="text/babel" src="search.js"></script>
     <script type="text/babel">
+      document.ontouchmove = function(event) { event.preventDefault(); }
       ReactDOM.render(<Search/>, document.getElementById('content'))
     </script>
   </body>
