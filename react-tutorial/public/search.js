@@ -39,13 +39,21 @@ var SelectBox = React.createClass({
           onDone={this.onEndSelection}
         />
     );
-    var selectedItems = this.state.selected.map(x => <img width="40px" height="28px" style={{padding: "2px"}} key={x.key} alt={x.label} src={x.iconUri()} />);
+    var itemStyle = {
+      float: this.props.itemFloat, 
+      backgroundColor: "rgba(255, 255, 255, 0.5)",
+      margin: "2px",
+      borderRadius: "7px"
+    };
+    var selectedItems = this.state.selected.map(
+      x => <img width="35px" height="30px" style={itemStyle} key={x.key} alt={x.label} src={x.iconUri()} />
+    );
     return (
         <div className="select-box" style={{position: "relative"}}>
-          <div style={{position: "absolute", zIndex: navigator.platform === "iPhone" ? -1 : 2}}>
+          <div style={{position: "absolute", zIndex: navigator.platform === "iPhone" ? -1 : 2, opacity: "0"}}>
             {this.state.isModifying ? picker : null}
           </div>
-          <div style={{position: "absolute", zIndex:  1}} onClick={this.onBeginSelection}>
+          <div style={{position: "absolute", zIndex:  1, width: "100%"}} onClick={this.onBeginSelection}>
             {selectedItems}
           </div>
         </div>
@@ -81,7 +89,7 @@ var SelectPicker = React.createClass({
 //////////////////////////
 
 var Search = React.createClass({
-  style: { height: "100%" },
+  style: { height: "100%", position: "relative" },
   bgStyle: {
     backgroundImage: (new Date()).getMinutes() % 2 == 0 ? "url(/img/bg_rome3.jpg)" : "url(/img/bg_paris.jpg)",
     backgroundPosition: "center center", backgroundSize: "auto 100%", backgroundRepeat: "no-repeat",
@@ -93,15 +101,20 @@ var Search = React.createClass({
     position: "fixed", left: 0, right: 0, zIndex: 9999
   },
   render: function() {
-    var selectedLangs = [
-      _LANG_ALL_LOOKUP["en"],
-      _LANG_ALL_LOOKUP["et"]
-    ];
+    var selectedLangs = ["en", "et"].map(x => _LANG_ALL_LOOKUP[x]);
+    var selectedTopics = ["history", "architecture"].map(x => _TOPIC_ALL_LOOKUP[x]);
+    console.debug(selectedTopics);
+
     return (
       <div className="search" style={this.style}>
         <div style={this.bgStyle}></div>
         <div style={this.contentStyle}>
-          <SelectBox selected={selectedLangs} all={LANG_ALL} />
+          <div style={{position: "absolute", left: "0px", right: "50%"}}>
+            <SelectBox selected={selectedLangs}  all={LANG_ALL} itemFloat="left" />
+          </div>
+          <div style={{position: "absolute", left: "50%", right: "0px"}}>
+            <SelectBox selected={selectedTopics} all={TOPIC_ALL} itemFloat="right" />
+          </div>
         </div>
       </div>
     );
@@ -119,10 +132,10 @@ function mapFromList(xs) { return xs.reduce((acc, y) => { acc[y[0]] = y[1]; retu
 function Language(attrs) { Object.assign(this, attrs); }
 Language.prototype = {
   iconUri: function() {
-    return this.icoUriWithGeom({w:128,h:128});
+    return this.iconUriWithGeom({w:128,h:128});
   },
-  icoUriWithGeom: function(geom) {
-    return ("/img/" + this.key + "_" + this.ctryCodes.join('+')
+  iconUriWithGeom: function(geom) {
+    return ("/img/lang_" + this.key + "_" + this.ctryCodes.join('+')
             + "_" + geom.w+"x"+geom.h + ".png");
   }
 }
@@ -138,11 +151,40 @@ var LANG_ALL = [
   {key: "es", ctryCodes: ["es"],       label: "Español"},
   {key: "it", ctryCodes: ["it"],       label: "Italiano"},
   {key: "pt", ctryCodes: ["pt", "br"],       label: "Português"},
-].map(y => new Language(y));
+].map(x => new Language(x));
 
 var _LANG_ALL_LOOKUP = mapFromList(
-  LANG_ALL.map(y => [y.key, y])
+  LANG_ALL.map(x => [x.key, x])
 );
+
+
+function Topic(attrs) { Object.assign(this, attrs); }
+Topic.prototype = {
+  iconUri: function() {
+    return this.iconUriWithGeom({w:128,h:128});
+  },
+  iconUriWithGeom: function(geom) {
+    return ("/img/topic_" + this.key 
+            + "_" + geom.w+"x"+geom.h + ".png");
+  }
+}
+
+var TOPIC_ALL = [
+  {key: "history",               label: "History"},
+  {key: "architecture",          label: "Architecture"},
+  {key: "sightseeing",           label: "Sightseeing"},
+  {key: "pubsAndBars",           label: "Pubs & Bars"},
+  {key: "diningAndRestaurants",  label: "Dining & Restaurants"},
+  {key: "beer",                  label: "Beer"},
+  {key: "wine",                  label: "Wine"},
+  {key: "parksAndWildlife",      label: "Parks & Wildlife"},
+  {key: "outdoorAndActivities",  label: "Outdoor & Activites"},
+].map(x => new Topic(x));
+var _TOPIC_ALL_LOOKUP = mapFromList(
+  TOPIC_ALL.map(x => [x.key, x])
+);
+
+
 
 window.LANG_ALL = LANG_ALL;
 window._LANG_ALL_LOOKUP = _LANG_ALL_LOOKUP;
