@@ -41,7 +41,7 @@ var SelectBox = React.createClass({
         />
     );
     var itemStyle = {
-      float: this.props.itemFloat, 
+      float: this.props.itemFloat,
       backgroundColor: "rgba(255, 255, 255, 0.5)",
       width: "43px", height: "41px", margin: "4px",
       borderRadius: "7px"
@@ -64,7 +64,6 @@ var SelectBox = React.createClass({
 
 
 var SelectPicker = React.createClass({
-  // getInitialState: function() { return {selected: this.props.selected}; },
   componentDidMount: function() { this.refs.select.focus(); },
   isSelected: function(key) { return this.props.selected.some(x => x.key === key); },
   onChange: function(e) {
@@ -108,8 +107,14 @@ var Search = React.createClass({
     position: "fixed", left: 0, right: 0, zIndex: 9999
   },
 
-  onTopicSelectionChange: function(topics) { this.setState({topics: topics}); },
-  onLangSelectionChange : function(langs ) { this.setState({langs : langs }); },
+  onTopicSelectionChange: function(xs) {
+    var overSize = Math.max(0, xs.length - 4);
+    this.setState({topics: xs.slice(overSize)});
+  },
+  onLangSelectionChange : function(xs) {
+    var overSize = Math.max(0, xs.length - 4);
+    this.setState({langs: xs.slice(overSize)});
+  },
 
   render: function() {
     return (
@@ -171,7 +176,7 @@ Topic.prototype = {
     return this.iconUriWithGeom({w:128,h:128});
   },
   iconUriWithGeom: function(geom) {
-    return ("/img/topic_" + this.key 
+    return ("/img/topic_" + this.key
             + "_" + geom.w+"x"+geom.h + ".png");
   }
 }
