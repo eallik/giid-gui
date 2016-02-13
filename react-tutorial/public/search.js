@@ -27,6 +27,9 @@ var BG_ALL = [
   "bridge",
 ];
 
+var NICE_WHITE_BG = "rgba(255,255,255,0.5)";
+var NICE_WHITE_BG2 = "rgba(255,255,255,0.7)";
+
 var SelectBox = React.createClass({
   getInitialState: function() { return {isModifying: false}; },
 
@@ -47,16 +50,14 @@ var SelectBox = React.createClass({
         />
     );
     var itemStyle = {
-      float: this.props.itemFloat,
       backgroundColor: "rgba(255, 255, 255, 0.5)",
-      width: "43px", height: "41px", margin: "4px",
-      // borderRadius: "7px"
+      border:"1px solid white",
+      borderRadius:"50%",
+      width: "28px", height: "28px", margin: "4px"
     };
     var selectedItems = this.props.selected.map(
       x => <img style={itemStyle} key={x.key} alt={x.label} src={x.iconUri()} />
     );
-    if (this.props.itemFloat === "right")
-      selectedItems.reverse();
 
     return (
         <div className="select-box" style={{position: "relative"}}>
@@ -126,6 +127,7 @@ var Search = React.createClass({
   },
 
   render: function() {
+    var currWday = ["sun","mon","tue","wed","thu","fri","sat"][(new Date()).getDay()];
     return (
       <div className="search" style={this.style}>
         <div style={this.bgStyle}></div>
@@ -134,16 +136,29 @@ var Search = React.createClass({
             <img style={{margin:"5px 0 0px 10px"}} src="/img/guideme_takemeonatour.png"/>
           </div>
           <div style={{position:"relative"}}>
-            <div style={{position: "absolute", left: "0px", right: "50%"}}>
-              <SelectBox selected={this.state.langs}  all={LANG_ALL}  onYield={this.onLangSelectionChange}  itemFloat="left"  />
+            <div style={{position: "absolute", left: "0px", right: "50.4%", backgroundColor:NICE_WHITE_BG2, boxSizing:"border-box", height:"70px", padding:"7px",borderRadius:"0 0 20px 0"}}>
+              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(/img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>I WANT A GUIDE AT...</div>
+              <div style={{background: "rgba(100,220,140,0.2) url(/img/currloc.png) no-repeat",backgroundPosition:"10px center",backgroundSize:"12px 12px",display:"inline-block",margin:"5px 0 0 5px",padding:"1px 10px 1px 27px",border:"1px solid white",borderRadius:"15px",fontSize:"10px",textTransform:"uppercase"}}>my current location</div>
             </div>
-            <div style={{position: "absolute", left: "50%", right: "0px"}}>
-              <SelectBox selected={this.state.topics} all={TOPIC_ALL} onYield={this.onTopicSelectionChange} itemFloat="right" />
+            <div style={{position: "absolute", left: "50.4%", right: "0px", backgroundColor:NICE_WHITE_BG2, boxSizing:"border-box", height:"70px", padding:"7px"}}>
+              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(/img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>SOMETIME DURING...</div>
+              <div style={{background: "rgba(100,220,140,0.2) url(/img/cal.png) no-repeat",backgroundPosition:"10px center",backgroundSize:"12px 12px",display:"inline-block",margin:"5px 0 0 5px",padding:"1px 10px 1px 27px",border:"1px solid white",borderRadius:"15px",fontSize:"10px",textTransform:"uppercase"}}>today &ndash; next {currWday}</div>
             </div>
-          <div style={{position: "absolute", top: "55px", width: "100%"}}>
-            <SearchResults items={[]} />
+            <div style={{position: "absolute", left: "0px", right: "50.4%", top:"73px", backgroundColor:NICE_WHITE_BG2, boxSizing:"border-box", height:"70px", padding:"7px"}}>
+              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(/img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>YOUR LANGUAGES</div>
+              <SelectBox selected={this.state.langs}  all={LANG_ALL}  onYield={this.onLangSelectionChange} />
+            </div>
+            <div style={{position: "absolute", left: "50.4%", right: "0px", top:"73px", backgroundColor:NICE_WHITE_BG2, boxSizing:"border-box", height:"70px", padding:"7px",borderRadius:"20px 0 0 0"}}>
+              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(/img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>YOUR INTERESTS</div>
+              <SelectBox selected={this.state.topics} all={TOPIC_ALL} onYield={this.onTopicSelectionChange} />
+            </div>
+            <div style={{position: "absolute", top: "145px", width: "100%"}}>
+              <SearchResults items={[]} />
+            </div>
           </div>
-          </div>
+            <div style={{position:"fixed",left:0,right:0,bottom:0,height:"40px",textAlign:"center",paddingTop:"12px",backgroundColor:"rgba(255,206,81,0.9)"}}>
+              <LittleGreenBtn label="hmm... just figure out what I like" iconUrl="/img/qmark3.png" backgroundColor="#99FFC0"/>
+            </div>
         </div>
       </div>
     );
@@ -151,13 +166,15 @@ var Search = React.createClass({
 });
 
 var SearchResults = React.createClass({
-  itemStyle: {height:"110px", backgroundColor:"rgba(255,255,255,0.5)", lineHeight:"1em", overflow:"hidden", position:"relative", margin:"1px"},
+  itemStyle: {height:"105px", backgroundColor:NICE_WHITE_BG, lineHeight:"1em", overflow:"hidden", position:"relative", margin:"1px"},
   render: function() {
+    var certificationBadge = <div style={{zIndex:1000,position:"absolute",top:"22px",left:"110px",width:"60px",height:"48px",transform:"rotate(19deg)",opacity:"0.6",backgroundImage:"url(/img/certified.png)", backgroundSize:"60px 48px", backgroundPosition:"center center",backgroundRepeat:"no-repeat"}}></div>;
     var items = GUIDES_ALL.map(x => {
       return (
           <div key={x.id} style={this.itemStyle}>
-            <div style={{position: "absolute", left:"10px",top:"10px"}}>
-              <img src={x.profilePhoto} style={{display:"block", width: "55px", height: "55px", marginBottom:"5px"}} />
+            {x.isCertified() ? certificationBadge : null}
+            <div style={{position: "absolute", left:"10px",top:"20px"}}>
+              <img src={x.profilePhoto} style={{borderRadius:"50%",display:"block", width: "55px", height: "55px", marginBottom:"5px"}} />
             </div>
             <div style={{position: "absolute", left:"80px", top:"10px", fontSize:"11px",textTransform:"uppercase"}}>
               {
@@ -176,8 +193,11 @@ var SearchResults = React.createClass({
             <div style={{position: "absolute", left:"80px", top:"62px", fontSize:"15px",fontWeight:"bold",padding:"6px",backgroundColor:"#FF99C0",borderRadius:"3px",width:"30px",textAlign:"center"}}>
               {x.rating}
             </div>
+            <div style={{position: "absolute", left:"127px", top:"62px", fontSize:"10px", paddingTop:"10px"}}>
+              {x.numStories} traveller stories
+            </div>
             <div style={{position:"absolute",right:"20px", top:"62px"}}>
-              <PingMeBtn/>
+              <LittleGreenBtn label="ping" iconUrl="/img/bell.png" backgroundColor="#99FFC0"/>
             </div>
           </div>
       );
@@ -190,7 +210,7 @@ var SearchResults = React.createClass({
   }
 });
 
-var PingMeBtn = React.createClass({
+var LittleGreenBtn = React.createClass({
   getInitialState: function() { return {pressed:false}; },
   render: function() {
       return (
@@ -201,12 +221,12 @@ var PingMeBtn = React.createClass({
             onMouseOut={this.onTouchEnd}
             onMouseUp={this.onTouchEnd}
             style={{border:"2px solid rgb(254,255,240)", WebkitUserSelect: "none", textAlign:"left", fontSize:"11px",textTransform:"uppercase",
-                    padding:"6px 8px",borderRadius:"3px",width:"70px",
-                    background:"#99FFC0 url(/img/bell.png) no-repeat",backgroundPosition:"85% 50%",backgroundSize:"13px 13px",
+                    padding:"4px 5px 4px 5px",borderRadius:"3px", display:"inline-block",
+                    background: this.props.backgroundColor + " url("+this.props.iconUrl+") no-repeat",backgroundOrigin:"content-box",backgroundPosition:"right center",backgroundSize:"13px 13px",
                     WebkitFilter: this.state.pressed ? "invert(15%)" : "invert(0%)"
                    }}
           >
-            ping me
+            <div style={{paddingRight:"18px"}}>{this.props.label}</div>
           </div>
       );
   },
@@ -281,17 +301,25 @@ var _TOPIC_ALL_LOOKUP = mapFromList(
 );
 
 
+function Guide(attrs) { Object.assign(this, attrs); }
+Guide.prototype = {
+  isCertified: function() { return this.certifications.some(x => x.type === "certified"); }
+};
 var GUIDES_ALL = [
   {
-    id: "erik" , name: "Erik" , locations: ["Tallinn"],
-    certifications: [],
-    rating: "9.2",
-    profilePhoto: "/img/profile-photos/erik-kilpkonn.jpg"
+    id: "siim" , name: "Siim" , locations: ["Tallinn"],
+    certifications: [
+      {type:"certified",by:"Estonian Assoc. of Tourist Guides"}
+    ],
+    rating: "9.8",
+    numStories: 7,
+    profilePhoto: "/img/profile-photos/siim.jpg"
   },
   {
     id: "timo" , name: "Timo" , locations: ["Tallinn","Helsinki"],
     certifications: [],
-    rating: "9.2",
+    rating: "9.3",
+    numStories: 5,
     profilePhoto: "/img/profile-photos/timo-maakler.jpg"
   },
   {
@@ -299,18 +327,18 @@ var GUIDES_ALL = [
     certifications: [
       {type:"featured"}
     ],
-    rating: "9.3",
+    rating: "9.2",
+    numStories: 2,
     profilePhoto: "/img/profile-photos/kaiko.jpg"
   },
   {
-    id: "siim" , name: "Siim" , locations: ["Tallinn"],
-    certifications: [
-      {type:"certified",by:"Estonian Assoc. of Tourist Guides"}
-    ],
-    rating: "10.0",
-    profilePhoto: "/img/profile-photos/siim.jpg"
-  }
-];
+    id: "erik" , name: "Erik" , locations: ["Tallinn"],
+    certifications: [],
+    rating: "8.7",
+    numStories: 4,
+    profilePhoto: "/img/profile-photos/erik-kilpkonn.jpg"
+  },
+].map(x => new Guide(x));
 
 
 window.Search = Search;
