@@ -107,7 +107,7 @@ var Search = React.createClass({
   },
   style: { height: "100%", position: "relative" },
   bgStyle: {
-    backgroundImage: "url(/img/bg_" + BG_ALL[(new Date()).getMinutes() % BG_ALL.length] + ".jpg)",
+    backgroundImage: "url(img/bg_" + BG_ALL[(new Date()).getMinutes() % BG_ALL.length] + ".jpg)",
     backgroundPosition: "center center", backgroundSize: "auto 100%", backgroundRepeat: "no-repeat",
     WebkitFilter: "blur(4px)",
 
@@ -133,23 +133,23 @@ var Search = React.createClass({
         <div style={this.bgStyle}></div>
         <div style={this.contentStyle}>
           <div style={{background:"-webkit-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0))"}}>
-            <img style={{margin:"5px 0 0px 10px"}} src="/img/guideme_takemeonatour.png"/>
+            <img style={{margin:"5px 0 0px 10px"}} src="img/guideme_takemeonatour.png"/>
           </div>
           <div style={{position:"relative"}}>
             <div style={{position: "absolute", left: "0px", right: "50.4%", backgroundColor:NICE_WHITE_BG2, boxSizing:"border-box", height:"70px", padding:"7px",borderRadius:"0 0 20px 0"}}>
-              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(/img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>I WANT A GUIDE AT...</div>
-              <div style={{background: "rgba(100,220,140,0.2) url(/img/currloc.png) no-repeat",backgroundPosition:"10px center",backgroundSize:"12px 12px",display:"inline-block",margin:"5px 0 0 5px",padding:"1px 10px 1px 27px",border:"1px solid white",borderRadius:"15px",fontSize:"10px",textTransform:"uppercase"}}>my current location</div>
+              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>I WANT A GUIDE AT...</div>
+              <div style={{background: "rgba(100,220,140,0.2) url(img/currloc.png) no-repeat",backgroundPosition:"10px center",backgroundSize:"12px 12px",display:"inline-block",margin:"5px 0 0 5px",padding:"1px 10px 1px 27px",border:"1px solid white",borderRadius:"15px",fontSize:"10px",textTransform:"uppercase"}}>my current location</div>
             </div>
             <div style={{position: "absolute", left: "50.4%", right: "0px", backgroundColor:NICE_WHITE_BG2, boxSizing:"border-box", height:"70px", padding:"7px"}}>
-              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(/img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>SOMETIME DURING...</div>
-              <div style={{background: "rgba(100,220,140,0.2) url(/img/cal.png) no-repeat",backgroundPosition:"10px center",backgroundSize:"12px 12px",display:"inline-block",margin:"5px 0 0 5px",padding:"1px 10px 1px 27px",border:"1px solid white",borderRadius:"15px",fontSize:"10px",textTransform:"uppercase"}}>today &ndash; next {currWday}</div>
+              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>SOMETIME DURING...</div>
+              <div style={{background: "rgba(100,220,140,0.2) url(img/cal.png) no-repeat",backgroundPosition:"10px center",backgroundSize:"12px 12px",display:"inline-block",margin:"5px 0 0 5px",padding:"1px 10px 1px 27px",border:"1px solid white",borderRadius:"15px",fontSize:"10px",textTransform:"uppercase"}}>today &ndash; next {currWday}</div>
             </div>
             <div style={{position: "absolute", left: "0px", right: "50.4%", top:"73px", backgroundColor:NICE_WHITE_BG2, boxSizing:"border-box", height:"70px", padding:"7px"}}>
-              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(/img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>YOUR LANGUAGES</div>
+              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>YOUR LANGUAGES</div>
               <SelectBox selected={this.state.langs}  all={LANG_ALL}  onYield={this.onLangSelectionChange} />
             </div>
             <div style={{position: "absolute", left: "50.4%", right: "0px", top:"73px", backgroundColor:NICE_WHITE_BG2, boxSizing:"border-box", height:"70px", padding:"7px",borderRadius:"20px 0 0 0"}}>
-              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(/img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>YOUR INTERESTS</div>
+              <div style={{fontSize:"10px",lineHeight:"21px",height:"21px",backgroundImage:"url(img/confsliders.png)",backgroundRepeat:"no-repeat",paddingLeft:"23px",backgroundPosition:"3px 3px",backgroundSize:"14px 14px"}}>YOUR INTERESTS</div>
               <SelectBox selected={this.state.topics} all={TOPIC_ALL} onYield={this.onTopicSelectionChange} />
             </div>
             <div style={{position: "absolute", top: "145px", width: "100%"}}>
@@ -157,7 +157,7 @@ var Search = React.createClass({
             </div>
           </div>
             <div style={{position:"fixed",left:0,right:0,bottom:0,height:"40px",textAlign:"center",paddingTop:"12px",backgroundColor:"rgba(255,206,81,0.9)"}}>
-              <LittleGreenBtn label="hmm... just figure out what I like" iconUrl="/img/qmark3.png" backgroundColor="#99FFC0"/>
+              <LittleGreenBtn label="hmm... just figure out what I like" iconUrl="img/qmark3.png" backgroundColor="#99FFC0"/>
             </div>
         </div>
       </div>
@@ -168,7 +168,7 @@ var Search = React.createClass({
 var SearchResults = React.createClass({
   itemStyle: {height:"105px", backgroundColor:NICE_WHITE_BG, lineHeight:"1em", overflow:"hidden", position:"relative", margin:"1px"},
   render: function() {
-    var certificationBadge = <div style={{zIndex:1000,position:"absolute",top:"22px",left:"110px",width:"60px",height:"48px",transform:"rotate(19deg)",opacity:"0.6",backgroundImage:"url(/img/certified.png)", backgroundSize:"60px 48px", backgroundPosition:"center center",backgroundRepeat:"no-repeat"}}></div>;
+    var certificationBadge = <div style={{zIndex:1000,position:"absolute",top:"22px",left:"110px",width:"60px",height:"48px",transform:"rotate(19deg)",opacity:"0.6",backgroundImage:"url(img/certified.png)", backgroundSize:"60px 48px", backgroundPosition:"center center",backgroundRepeat:"no-repeat"}}></div>;
     var items = GUIDES_ALL.map(x => {
       return (
           <div key={x.id} style={this.itemStyle}>
@@ -197,7 +197,7 @@ var SearchResults = React.createClass({
               {x.numStories} traveller stories
             </div>
             <div style={{position:"absolute",right:"20px", top:"62px"}}>
-              <LittleGreenBtn label="ping" iconUrl="/img/bell.png" backgroundColor="#99FFC0"/>
+              <LittleGreenBtn label="ping" iconUrl="img/bell.png" backgroundColor="#99FFC0"/>
             </div>
           </div>
       );
@@ -251,7 +251,7 @@ Language.prototype = {
     return this.iconUriWithGeom({w:128,h:128});
   },
   iconUriWithGeom: function(geom) {
-    return ("/img/lang_" + this.key + "_" + this.ctryCodes.join('+')
+    return ("img/lang_" + this.key + "_" + this.ctryCodes.join('+')
             + "_" + geom.w+"x"+geom.h + ".png");
   }
 }
@@ -280,7 +280,7 @@ Topic.prototype = {
     return this.iconUriWithGeom({w:128,h:128});
   },
   iconUriWithGeom: function(geom) {
-    return ("/img/topic_" + this.key
+    return ("img/topic_" + this.key
             + "_" + geom.w+"x"+geom.h + ".png");
   }
 }
@@ -313,14 +313,14 @@ var GUIDES_ALL = [
     ],
     rating: "9.8",
     numStories: 7,
-    profilePhoto: "/img/profile-photos/siim.jpg"
+    profilePhoto: "img/profile-photos/siim.jpg"
   },
   {
     id: "timo" , name: "Timo" , locations: ["Tallinn","Helsinki"],
     certifications: [],
     rating: "9.3",
     numStories: 5,
-    profilePhoto: "/img/profile-photos/timo-maakler.jpg"
+    profilePhoto: "img/profile-photos/timo-maakler.jpg"
   },
   {
     id: "kaiko", name: "Kaiko", locations: ["Viljandi","Tallinn"],
@@ -329,14 +329,14 @@ var GUIDES_ALL = [
     ],
     rating: "9.2",
     numStories: 2,
-    profilePhoto: "/img/profile-photos/kaiko.jpg"
+    profilePhoto: "img/profile-photos/kaiko.jpg"
   },
   {
     id: "erik" , name: "Erik" , locations: ["Tallinn"],
     certifications: [],
     rating: "8.7",
     numStories: 4,
-    profilePhoto: "/img/profile-photos/erik-kilpkonn.jpg"
+    profilePhoto: "img/profile-photos/erik-kilpkonn.jpg"
   },
 ].map(x => new Guide(x));
 
