@@ -1,0 +1,20 @@
+html, body, * { 
+    font-family: "Noto", "Helvetica", "Arial"; font-size: 11px;
+}
+
+@font-face {
+    font-weight: 400;
+    font-style: normal;
+    font-family: 'Noto';
+    src: url('http://icd.hwstatic.com/static/fonts/noto/notosans-regular.eot');
+    src: url('http://icd.hwstatic.com/static/fonts/noto/notosans-regular.eot?#iefix') format(embedded-opentype), url('http://icd.hwstatic.com/static/fonts/noto/notosans-regular.woff') format(woff), url('http://icd.hwstatic.com/static/fonts/noto/notosans-regular.woff2') format(woff2), url('http://icd.hwstatic.com/static/fonts/noto/notosans-regular.ttf') format(truetype)
+}
+
+@font-face {
+    font-weight: bold;
+    font-style: normal;
+    font-family: 'Noto';
+    src: url('http://icd.hwstatic.com/static/fonts/noto/notosans-bold.eot');
+    src: url('http://icd.hwstatic.com/static/fonts/noto/notosans-bold.eot?#iefix') format(embedded-opentype), url('http://icd.hwstatic.com/static/fonts/noto/notosans-bold.woff') format(woff), url('http://icd.hwstatic.com/static/fonts/noto/notosans-bold.woff2') format(woff2), url('http://icd.hwstatic.com/static/fonts/noto/notosans-bold.ttf') format(truetype)
+}
+
